@@ -2,20 +2,17 @@
 -export([rpnCalc/0, convertToken/1]).
 
 % rpnCalc/0
-% Starts the calculator prompt by calling rpnCalc/1. It passes 'start', although
-% any value other than the 'ok' atom should be fine.
-
+% Starts the calculator prompt by calling rpnCalc/1.
 rpnCalc() ->
-    rpnCalc(start).
+    rpnCalc(false).
 
 % rpnCalc/1
-% Continues to take input until param1 is 'ok'.
-% There's probably a better way to terminate than this.
-rpnCalc(ok) -> ok;
-rpnCalc(_) ->
+% Continues to take input until param1 is 'true'.
+rpnCalc(true) -> ok;
+rpnCalc(false) ->
     [X] = lists:foldl(fun rpnCalc/2, [], getTokens()),
     io:fwrite("~w~n",[X]),
-    rpnCalc(X).
+    rpnCalc(X =:= kill).
 
 % getTokens/0
 % Takes input from stdin and returns a list of tokens
@@ -38,7 +35,7 @@ convertToken(T) ->
 % applys the operator to values on the stack, or converts the token to a
 % numeric value and adds it to the stack.
 
-rpnCalc("end", _) -> [ok];
+rpnCalc("end", _) -> [kill];
 rpnCalc("+", [A, B | T])  -> [B + A | T];
 rpnCalc("-", [A, B | T])  -> [B - A | T];
 rpnCalc("/", [A, B | T])  -> [B / A | T];
